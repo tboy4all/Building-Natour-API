@@ -9,6 +9,7 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -44,7 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security HTTP headers
 // app.use(helmet.contentSecurityPolicy());
-// app.use(helmet());
+// app.use(hel97met());
 // app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   helmet({
@@ -77,7 +78,7 @@ app.use('/api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 // Data sanitization against NOSQL query injection
@@ -128,17 +129,7 @@ app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res, next) => {
-  // res.status(404).json({
-  //   status: 'fail',
-  //   message: `Can't find ${req.originalUrl} on this server`,
-  // });
-
-  // const err = new Error(`Can't find ${req.originalUrl} on this server`);
-  // err.status = 'fail';
-  // err.statusCode = 404;
-
-  // next(err);
-  next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 app.use(globalErrorHandler);
